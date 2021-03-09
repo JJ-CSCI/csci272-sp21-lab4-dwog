@@ -7,10 +7,85 @@ using Catch::Matchers::Equals;
 //------------------------------
 
 // Fix the following class
-class Complex {
+#include <array>
+#include <ctype.h>
+
+
+
+
+
+
+
+class Complex
+{
+private:
+
+    std::array<int, 2> coefficients;
+
+    public:
+
+    Complex(int a=0, int b=0);
     void operator>>(std::string&) const;
     void operator<<(const std::string&);
+    int re() const;
+    int im() const;
+
 };
+
+
+
+
+
+Complex::Complex(int a, int b)
+{
+    coefficients = {a, b};
+}
+
+void Complex::operator>>(std::string& output) const
+{
+     std::string real{std::to_string(coefficients[0])}, imaginary{std::to_string(coefficients[1]) + "i"};
+     output = (real + ((coefficients[1] < 0) ? "" : "+") + imaginary);
+}
+
+void Complex::operator<<(const std::string& input)
+{
+    std::array<std::string, 2> temp;
+    bool seen{false};
+    int index{0};
+
+    for (const auto& i : input)
+    {
+        if ((isdigit(static_cast<int>(i))) && (!seen))
+        seen = true;
+    
+        if ((seen) && ((i == '-') || (i == '+')))
+        index++;
+        
+        temp[index] += i;
+    }
+
+    index = 0;
+    for (const auto& i : temp)
+    {
+        coefficients[index] = std::stoi(i);
+        index++;
+    }
+
+}
+
+int Complex::re() const
+{
+    return coefficients[0];
+}
+
+int Complex::im() const
+{
+    return coefficients[1];
+}
+
+
+
+
 
 //------------------------------
 //   DO NOT MODIFY TEST CASES
